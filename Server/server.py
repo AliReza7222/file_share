@@ -60,22 +60,24 @@ class Server:
         pass
 
     def start_manager(self):
-        command = input("Please enter your command: ").split()
-        if command[0].lower() == 'start':
-            self.start()
-        elif command[0].lower() == "terminate":
-            self.start(t='close')
-        elif command[0].lower() == "add_file":
-            self.add_file(command[1])
-        elif command[0].lower() == "remove_file":
-            self.remove_file(command[1])
-        elif command[0].lower() == "ban":
-            self.ban(command[1])
-        elif command[0].lower() == "unban":
-            self.ban(command[1], un='yes')
-        elif command[0].lower() == "help":
-            with open("../help.txt", "r") as file_help:
-                print(file_help.read())
+        while True:
+            command = input("Please enter your command: ").split()
+            if command[0].lower() == 'start':
+                threading.Thread(target=self.start())
+            elif command[0].lower() == "terminate":
+                self.start(t='close')
+                break
+            elif command[0].lower() == "add_file":
+                threading.Thread(target=self.add_file, args=(command[1],))
+            elif command[0].lower() == "remove_file":
+                threading.Thread(target=self.remove_file, args=(command[1],))
+            elif command[0].lower() == "ban":
+                threading.Thread(target=self.ban, args=(command[1],))
+            elif command[0].lower() == "unban":
+                threading.Thread(target=self.ban, args=(command[1], 'yes'))
+            elif command[0].lower() == "help":
+                with open("../help.txt", "r") as file_help:
+                    print(file_help.read())
 
 
 server = Server()
