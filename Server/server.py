@@ -1,11 +1,16 @@
 import threading, socket
 
+
 class Server:
+    list_ban = list()
+
     def __init__(self):
         pass
 
     def client(self, client, address):
         name_client = threading.currentThread().getName()
+        if address[0] not in self.list_ban:
+            pass
         pass
 
     def start(self, t=None):
@@ -25,6 +30,13 @@ class Server:
         soc.close()
         print("close server.")
 
+    def ban(self, ip, un=None):
+        if ip not in self.list_ban:
+            self.list_ban.append(ip)
+        if un == 'yes' and ip in self.list_ban:
+            self.list_ban.remove(ip)
+        return self.list_ban
+
     def add_file(self, address_file):
         with open("../file_list.txt",'r+') as all_file:
             try:
@@ -38,7 +50,7 @@ class Server:
                 print("Error add_file.")
 
     def remove_file(self, address):
-        with open("../file_list.txt",'r+') as all_file:
+        with open("../file_list.txt", 'r+') as all_file:
             list_file = all_file.read().split()
             if address in list_file:
                 list_file.remove(address)
@@ -57,6 +69,11 @@ class Server:
             self.add_file(command[1])
         elif command[0].lower() == "remove_file":
             self.remove_file(command[1])
+        elif command[0].lower() == "ban":
+            self.ban(command[1])
+        elif command[0].lower() == "unban":
+            self.ban(command[1], un='yes')
+
 
 server = Server()
 server.start_manager()
