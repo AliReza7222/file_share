@@ -73,6 +73,9 @@ class Server:
             self.ban(command[1])
         elif command[0].lower() == "unban":
             self.ban(command[1], un='yes')
+        elif command[0].lower() == "help":
+            with open("../help.txt", "r") as file_help:
+                print(file_help.read())
 
 
 server = Server()
