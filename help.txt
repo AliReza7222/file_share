@@ -1,0 +1,13 @@
+
+***********************************
+help commands :
+
+       start -----> start server
+       terminate ------> end server
+       add_file ------> commend add_file get a address and adds to file_list.txt
+       remove_file -----> commend remove_file get a address and remove of file_list.txt
+       ban -----> commend ban get a ip and block ip
+       unban -----> commend unban get a ip and unblock ip
+
+finish
+*************************************
