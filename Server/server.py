@@ -1,4 +1,4 @@
-import threading, socket
+import threading, socket, json
 
 
 class Server:
@@ -7,11 +7,17 @@ class Server:
     def __init__(self):
         pass
 
-    def client(self, client, address):
+    def client_handler(self, client, address):
         name_client = threading.currentThread().getName()
         if address[0] not in self.list_ban:
-            pass
-        pass
+            list_file = list()
+            with open("../file_list.txt","r") as all_file:
+                files = all_file.read().split()
+                for line in files:
+                    name_file = line.split('/')[-1]
+                    list_file.append(name_file)
+            message_list = json.dumps(list_file)
+            client.sendall(message_list.encode())
 
     def start(self, t=None):
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,7 +28,7 @@ class Server:
         for i in range(1, 10):
             s_c, address = soc.accept()
             print(f"connect client {i}.....")
-            th = threading.Thread(target=self.client, args=(s_c, address), name=f"client{i}")
+            th = threading.Thread(target=self.client_handler, args=(s_c, address), name=f"client{i}")
             if t == 'close':
                 th.setDaemon(True)
                 soc.close()
@@ -55,9 +61,6 @@ class Server:
             if address in list_file:
                 list_file.remove(address)
             print("file remove of list.")
-
-    def client_handler(self):
-        pass
 
     def start_manager(self):
         while True:
