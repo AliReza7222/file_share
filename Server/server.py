@@ -1,4 +1,4 @@
-import threading, socket, json
+import threading, socket, json, time
 
 
 class Server:
@@ -11,10 +11,10 @@ class Server:
         name_client = threading.currentThread().getName()
         if address[0] not in self.list_ban:
             list_file = list()
-            with open("../file_list.txt","r") as all_file:
+            with open("..\\file_list.txt","r") as all_file:
                 files = all_file.read().split()
                 for line in files:
-                    name_file = line.split('/')[-1]
+                    name_file = line.split("\\")[-1]
                     list_file.append(name_file)
             message_list = json.dumps(list_file)
             client.sendall(message_list.encode())
@@ -29,9 +29,6 @@ class Server:
             s_c, address = soc.accept()
             print(f"connect client {i}.....")
             th = threading.Thread(target=self.client_handler, args=(s_c, address), name=f"client{i}")
-            if t == 'close':
-                th.setDaemon(True)
-                soc.close()
             th.start()
         soc.close()
         print("close server.")
@@ -44,7 +41,7 @@ class Server:
         return self.list_ban
 
     def add_file(self, address_file):
-        with open("../file_list.txt",'r+') as all_file:
+        with open("..\\file_list.txt", 'r+') as all_file:
             try:
                 list_files = all_file.read().split()
                 if address_file not in list_files and len(list_files)>0:
@@ -56,7 +53,7 @@ class Server:
                 print("Error add_file.")
 
     def remove_file(self, address):
-        with open("../file_list.txt", 'r+') as all_file:
+        with open("..\\file_list.txt", 'r+') as all_file:
             list_file = all_file.read().split()
             if address in list_file:
                 list_file.remove(address)
@@ -64,22 +61,22 @@ class Server:
 
     def start_manager(self):
         while True:
+            time.sleep(0.5)
             command = input("Please enter your command: ").split()
             if command[0].lower() == 'start':
-                threading.Thread(target=self.start())
+                threading.Thread(target=self.start()).start()
             elif command[0].lower() == "terminate":
-                self.start(t='close')
                 break
             elif command[0].lower() == "add_file":
-                threading.Thread(target=self.add_file, args=(command[1],))
+                threading.Thread(target=self.add_file, args=(command[1],)).start()
             elif command[0].lower() == "remove_file":
-                threading.Thread(target=self.remove_file, args=(command[1],))
+                threading.Thread(target=self.remove_file, args=(command[1],)).start()
             elif command[0].lower() == "ban":
-                threading.Thread(target=self.ban, args=(command[1],))
+                threading.Thread(target=self.ban, args=(command[1],)).start()
             elif command[0].lower() == "unban":
-                threading.Thread(target=self.ban, args=(command[1], 'yes'))
+                threading.Thread(target=self.ban, args=(command[1], 'yes')).start()
             elif command[0].lower() == "help":
-                with open("../help.txt", "r") as file_help:
+                with open("..\\help.txt", "r") as file_help:
                     print(file_help.read())
 
 
