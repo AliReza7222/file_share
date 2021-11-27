@@ -8,18 +8,27 @@ class Server:
         pass
 
     def client_handler(self, client, address):
-        name_client = threading.currentThread().getName()
         if address[0] not in self.list_ban:
             list_file = list()
+            list_addr = list()
             with open("..\\file_list.txt","r") as all_file:
                 files = all_file.read().split()
+                list_addr = files
                 for line in files:
                     name_file = line.split("\\")[-1]
                     list_file.append(name_file)
             message_list = json.dumps(list_file)
             client.sendall(message_list.encode())
+            try:
+                message_client_one = client.recv(1024).decode()
+                if message_client_one in list_addr:
+                    with open(message_client_one,"rb") as select_file:
+                        file = select_file.read()
+                        client.sendall(file)
+            except:
+                pass
 
-    def start(self, t=None):
+    def start(self):
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         ip, port = '127.0.0.1', 72
         soc.bind((ip, port))
