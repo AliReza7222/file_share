@@ -1,9 +1,11 @@
 import socket, json
-import time
+import time, os
 
 history=list()
 soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 list_update = list()
+if os.path.exists("Download") == False:
+    os.mkdir("Download")
 while True:
     command = input("please enter your command: ").split()
     history.append(command[0])
@@ -39,7 +41,7 @@ while True:
         if name in list_update:
             soc.sendall(command[1].encode())
             select_file = soc.recv(900000)
-            with open(f"..\Download\\{name}","wb") as download:
+            with open(f"Download\\{name}","wb") as download:
                 n, s = 0, ""
                 print("download file ........")
                 while n<7:
@@ -49,6 +51,9 @@ while True:
                     n += 1
                 download.write(select_file)
             print("\nsuccessfully download.")
+    elif command[0].lower() == 'help':
+        with open("help.txt",'r') as help_file:
+            print(help_file.read())
     else:
         print("don\'t have command.\n")
         continue

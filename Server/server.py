@@ -19,14 +19,11 @@ class Server:
                     list_file.append(name_file)
             message_list = json.dumps(list_file)
             client.sendall(message_list.encode())
-            try:
-                message_client_one = client.recv(1024).decode()
-                if message_client_one in list_addr:
-                    with open(message_client_one,"rb") as select_file:
-                        file = select_file.read()
-                        client.sendall(file)
-            except:
-                pass
+            message_client_one = client.recv(1024).decode()
+            if message_client_one in list_addr:
+                with open(message_client_one,"rb") as select_file:
+                    file = select_file.read()
+                    client.sendall(file)
 
     def start(self):
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,6 +84,9 @@ class Server:
             elif command[0].lower() == "help":
                 with open("..\\help.txt", "r") as file_help:
                     print(file_help.read())
+            else:
+                print("don\'t have command.\n")
+                continue
 
 
 server = Server()
