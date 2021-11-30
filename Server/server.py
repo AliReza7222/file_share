@@ -7,23 +7,35 @@ class Server:
     def __init__(self):
         pass
 
-    def client_handler(self, client, address):
+    def client_handler(self, client, address, name):
         if address[0] not in self.list_ban:
-            list_file = list()
-            list_addr = list()
-            with open("..\\file_list.txt", "r") as all_file:
-                files = all_file.read().split()
-                list_addr.extend(files)
-                for line in files:
-                    name_file = line.split("\\")[-1]
-                    list_file.append(name_file)
-            message_list = json.dumps(list_file)
-            client.sendall(message_list.encode())
-            message_client_one = client.recv(1024).decode()
-            if message_client_one in list_addr:
-                with open(message_client_one, "rb") as select_file:
-                    file = select_file.read()
-                    client.sendall(file)
+            message_continue = (client.recv(1000)).decode()
+            while True:
+                if message_continue != "terminate":
+                    list_file = list()
+                    list_addr = list()
+                    with open("..\\file_list.txt", "r") as all_file:
+                        files = all_file.read().split()
+                        list_addr.extend(files)
+                        for line in files:
+                            name_file = line.split("\\")[-1]
+                            list_file.append(name_file)
+                    try:
+                        message_list = json.dumps(list_file)
+                        client.sendall(message_list.encode())
+                        message_client_one = client.recv(1024).decode()
+                        if message_client_one in list_addr:
+                            with open(message_client_one, "rb") as select_file:
+                                file = select_file.read()
+                                client.sendall(file)
+                    except:
+                        print(f"exit {name}.")
+                        break
+                elif message_continue == "terminate":
+                    print(f"exit {name}.")
+                    break
+        else:
+            raise Exception("address ip is block.")
 
     def start(self):
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,8 +45,9 @@ class Server:
         print("active server .")
         for i in range(1, 10):
             s_c, address = soc.accept()
-            print(f"connect client {i}.....")
-            th = threading.Thread(target=self.client_handler, args=(s_c, address), name=f"client{i}")
+            name = f"client {i}"
+            print(f"connect {name}.....")
+            th = threading.Thread(target=self.client_handler, args=(s_c, address, name), name=f"client{i}")
             th.start()
         soc.close()
         print("close server.")

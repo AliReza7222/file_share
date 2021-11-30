@@ -14,11 +14,16 @@ while True:
         history.append('connect')
         ip, port = '127.0.0.1', 72
         soc.connect((ip, port))
+        soc.sendall(command[0].encode())
         print("connect to server .")
     elif command[0].lower() == "terminate":
-        history.append("terminate")
-        soc.close()
-        break
+        try:
+            history.append("terminate")
+            soc.sendall(command[0].encode())
+            soc.close()
+            break
+        except:
+            break
     elif command[0].lower() == 'update':
         if 'connect' in history:
             n, s = 0, ''
@@ -28,6 +33,7 @@ while True:
                 s += '*'
                 print(s, end="")
                 n += 1
+            soc.sendall(command[0].encode())
             message = json.loads(soc.recv(1024))
             list_update = message
             print("\nsuccessfully list update.")
@@ -38,9 +44,9 @@ while True:
     elif command[0] == "list":
         print(f"list update is:\n{list_update}")
     elif command[0] == 'get' and 'connect' in history:
+        soc.sendall(command[0].encode())
         name = command[1].split("\\")[-1]
         if name in list_update:
-            print(name, command[1])
             soc.sendall(command[1].encode())
             select_file = soc.recv(900000)
             with open(f"Download\\{name}", "wb") as download:
