@@ -11,9 +11,9 @@ class Server:
         if address[0] not in self.list_ban:
             list_file = list()
             list_addr = list()
-            with open("..\\file_list.txt","r") as all_file:
+            with open("..\\file_list.txt", "r") as all_file:
                 files = all_file.read().split()
-                list_addr = files
+                list_addr.extend(files)
                 for line in files:
                     name_file = line.split("\\")[-1]
                     list_file.append(name_file)
@@ -21,7 +21,7 @@ class Server:
             client.sendall(message_list.encode())
             message_client_one = client.recv(1024).decode()
             if message_client_one in list_addr:
-                with open(message_client_one,"rb") as select_file:
+                with open(message_client_one, "rb") as select_file:
                     file = select_file.read()
                     client.sendall(file)
 
@@ -50,9 +50,9 @@ class Server:
         with open("..\\file_list.txt", 'r+') as all_file:
             try:
                 list_files = all_file.read().split()
-                if address_file not in list_files and len(list_files)>0:
+                if address_file not in list_files and len(list_files) > 0:
                     all_file.write(f"\n{address_file}")
-                elif address_file not in list_files and len(list_files)==0:
+                elif address_file not in list_files and len(list_files) == 0:
                     all_file.write(address_file)
                 print("add file in file_list.")
             except:

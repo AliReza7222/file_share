@@ -1,11 +1,12 @@
 import socket, json
 import time, os
 
-history=list()
+history = list()
 soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 list_update = list()
 if os.path.exists("Download") == False:
     os.mkdir("Download")
+
 while True:
     command = input("please enter your command: ").split()
     history.append(command[0])
@@ -18,11 +19,11 @@ while True:
         history.append("terminate")
         soc.close()
         break
-    elif command[0].lower() == 'update' :
+    elif command[0].lower() == 'update':
         if 'connect' in history:
             n, s = 0, ''
             history.append("update")
-            while n<7:
+            while n < 7:
                 time.sleep(0.5)
                 s += '*'
                 print(s, end="")
@@ -39,12 +40,13 @@ while True:
     elif command[0] == 'get' and 'connect' in history:
         name = command[1].split("\\")[-1]
         if name in list_update:
+            print(name, command[1])
             soc.sendall(command[1].encode())
             select_file = soc.recv(900000)
-            with open(f"Download\\{name}","wb") as download:
+            with open(f"Download\\{name}", "wb") as download:
                 n, s = 0, ""
                 print("download file ........")
-                while n<7:
+                while n < 7:
                     s += "*"
                     time.sleep(0.7)
                     print(s, end='')
@@ -52,10 +54,8 @@ while True:
                 download.write(select_file)
             print("\nsuccessfully download.")
     elif command[0].lower() == 'help':
-        with open("help.txt",'r') as help_file:
+        with open("help.txt", 'r') as help_file:
             print(help_file.read())
     else:
         print("don\'t have command.\n")
         continue
-
-
