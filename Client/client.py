@@ -11,7 +11,6 @@ while True:
     command = input("please enter your command: ").split()
     history.append(command[0])
     if command[0].lower() == 'connect':
-        history.append('connect')
         ip, port = '127.0.0.1', 72
         soc.connect((ip, port))
         soc.sendall(command[0].encode())
@@ -27,7 +26,6 @@ while True:
     elif command[0].lower() == 'update':
         if 'connect' in history:
             n, s = 0, ''
-            history.append("update")
             while n < 7:
                 time.sleep(0.5)
                 s += '*'
@@ -43,12 +41,12 @@ while True:
         print(history)
     elif command[0] == "list":
         print(f"list update is:\n{list_update}")
-    elif command[0] == 'get' and 'connect' in history:
+    elif command[0].lower() == 'get' and 'connect' in history:
         soc.sendall(command[0].encode())
         name = command[1].split("\\")[-1]
         if name in list_update:
             soc.sendall(command[1].encode())
-            select_file = soc.recv(900000)
+            select_file = soc.recv(9000000)
             with open(f"Download\\{name}", "wb") as download:
                 n, s = 0, ""
                 print("download file ........")

@@ -9,28 +9,26 @@ class Server:
 
     def client_handler(self, client, address, name):
         if address[0] not in self.list_ban:
-            message_continue = (client.recv(1000)).decode()
             while True:
-                if message_continue != "terminate":
-                    list_file = list()
-                    list_addr = list()
-                    with open("..\\file_list.txt", "r") as all_file:
-                        files = all_file.read().split()
-                        list_addr.extend(files)
-                        for line in files:
-                            name_file = line.split("\\")[-1]
-                            list_file.append(name_file)
-                    try:
-                        message_list = json.dumps(list_file)
-                        client.sendall(message_list.encode())
-                        message_client_one = client.recv(1024).decode()
-                        if message_client_one in list_addr:
-                            with open(message_client_one, "rb") as select_file:
-                                file = select_file.read()
-                                client.sendall(file)
-                    except:
-                        print(f"exit {name}.")
-                        break
+                message_continue = (client.recv(1000)).decode()
+                list_file = list()
+                list_addr = list()
+                with open("..\\file_list.txt", "r") as all_file:
+                    files = all_file.read().split()
+                    list_addr.extend(files)
+                    for line in files:
+                        name_file = line.split("\\")[-1]
+                        list_file.append(name_file)
+                if message_continue == "update":
+                    message_list = json.dumps(list_file)
+                    client.sendall(message_list.encode())
+                elif message_continue == "get":
+                    message_client_one = client.recv(1024).decode()
+                    if message_client_one in list_addr:
+                        with open(message_client_one, "rb") as select_file:
+                            file = select_file.read()
+                            print(file)
+                            client.sendall(file)
                 elif message_continue == "terminate":
                     print(f"exit {name}.")
                     break
