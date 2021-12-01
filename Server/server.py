@@ -25,10 +25,11 @@ class Server:
                 elif message_continue == "get":
                     message_client_one = client.recv(1024).decode()
                     if message_client_one in list_addr:
+                        name_file_download = message_client_one.split("\\")[-1]
                         with open(message_client_one, "rb") as select_file:
                             file = select_file.read()
-                            print(file)
                             client.sendall(file)
+                        print(f"file {name_file_download} downloaded ." )
                 elif message_continue == "terminate":
                     print(f"exit {name}.")
                     break
