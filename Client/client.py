@@ -11,7 +11,7 @@ while True:
     command = input("please enter your command: ").split()
     history.append(command[0])
     if command[0].lower() == 'connect':
-        ip, port = '127.0.0.1', 72
+        ip, port = '127.0.0.1', 7222
         soc.connect((ip, port))
         soc.sendall(command[0].encode())
         print("connect to server .")
