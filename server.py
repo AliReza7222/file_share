@@ -15,8 +15,65 @@ class Server:
     def __init__(self):
         self.ip = '127.0.0.1'
         self.port = 7222
-        self.permission_run = True
         self.database = DataBase()
+
+    def filter_check_data(self, table_name: str, column: str, data: str) -> bool:
+        filter_data = self.database.select_data(
+            table_name=table_name,
+            column=column,
+            condition=f"{column}=\'{data}\'"
+        )
+        return True if filter_data else False
+
+    def unblock(self, ip: str) -> None:
+        if self.filter_check_data(table_name='black_list', column='ip', data=ip):
+            self.database.delete_data(
+                table_name='black_list',
+                data=ip,
+                column='ip'
+            )
+            _print(f"Successfully ip {ip} unblocked .", Fore.GREEN)
+        else:
+            _print("This ip isn't in black list !", Fore.RED)
+
+    def block(self, ip: str) -> None:
+        if not self.filter_check_data(
+            table_name='black_list', column='ip', data=ip):
+            self.database.insert_data(
+                table_name='black_list',
+                columns='ip',
+                data=f"\'{ip}\'")
+            _print(f"Successfully block ip {ip}", Fore.GREEN)
+        else:
+            _print(f"Ip {ip} exists in black list", Fore.RED)
+
+    def list_files(self):
+        return self.database.select_data(table_name='media', column="name, file")
+
+    def add_file(self, name: str, path_file: str) -> None:
+        if not self.filter_check_data(
+            table_name='media', column='name', data=name):
+            self.database.insert_data(
+                table_name='media',
+                columns='name, file',
+                data=f"\'{name}\', \'{path_file}\'"
+            )
+            _print(f"Successfully add file {name} .", Fore.GREEN)
+        else:
+            _print(f"A file with this name: {name} exists !", Fore.RED)
+
+
+    def remove_file(self, name_file: str):
+        if self.filter_check_data(
+            table_name='media', column='name', data=name_file):
+            self.database.delete_data(
+                table_name='media',
+                column='name',
+                data=f"\'{name_file}\'"
+            )
+            _print(f"Successfully remove file with name {name_file} .", Fore.GREEN)
+        else:
+            _print(f"There is no file with this name!", Fore.RED)
 
     def start(self) -> None:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket_server:
@@ -30,6 +87,10 @@ class Server:
                 th.start()
                 _print(f"{address[0]}:{address[1]} connectd !", Fore.GREEN)
             _print("close server !", Fore.RED)
+
+    def check_ip_status(self, ip: str) -> None:
+        if self.filter_check_data(table_name='black_list', column='ip', data=ip):
+            raise exception.BlockIPException("Your IP is blocked!")
 
     def client_handler(self, client, address): # not check and clean
         self.check_ip_status(ip=address[0])
@@ -57,57 +118,3 @@ class Server:
             elif message_continue == "terminate":
                 print(f"exit {name}.")
                 break
-
-    def filter_check_data(self, table_name: str, column: str, data: str) -> bool:
-        filter_data = self.database.select_data(
-            table_name=table_name,
-            column=column,
-            condition=f"{column}=\'{data}\'"
-        )
-        return True if filter_data else False
-
-    def check_ip_status(self, ip: str) -> None:
-        if self.filter_check_data(table_name='black_list', column='ip', data=ip):
-            raise exception.BlockIPException("Your IP is blocked!")
-
-    def unblock(self, ip: str) -> None:
-        if self.filter_check_data(table_name='black_list', column='ip', data=ip):
-            self.database.delete_data(
-                table_name='black_list',
-                data=ip,
-                column='ip'
-            )
-            _print(f"Successfully ip {ip} unblocked .", Fore.GREEN)
-        else:
-            _print("This ip isn't in black list !", Fore.RED)
-
-    def block(self, ip: str) -> None:
-        if not self.filter_check_data(
-            table_name='black_list', column='ip', data=ip):
-            self.database.insert_data(
-                table_name='black_list',
-                columns='ip',
-                data=f"\'{ip}\'")
-            _print(f"Successfully block ip {ip}", Fore.GREEN)
-        else:
-            _print(f"Ip {ip} exists in black list", Fore.RED)
-
-    def add_file(self, name: str, path_file: str) -> None:
-        if not self.filter_check_data(
-            table_name='media', column='name', data=name):
-            self.database.insert_data(
-                table_name='media',
-                columns='name, file',
-                data=f"\'{name}\', \'{path_file}\'"
-            )
-            _print(f"Successfully add file {name} .", Fore.GREEN)
-        else:
-            _print(f"A file with this name: {name} exists !", Fore.RED)
-
-
-    def remove_file(self, address): # not check and clean
-        with open("..\\file_list.txt", 'r+') as all_file:
-            list_file = all_file.read().split()
-            if address in list_file:
-                list_file.remove(address)
-            print("file remove of list.")
