@@ -1,13 +1,32 @@
 
-***********************************
+--------------------------------------------------------------------------
 help commands :
 
-       start -----> start server
-       exit ------> end server
-       add_file ------> commend add_file get a address and adds to file_list.txt
-       remove_file -----> commend remove_file get a address and remove of file_list.txt
-       ban -----> commend ban get a ip and block ip
-       unban -----> commend unban get a ip and unblock ip
+       start :
+              The start command active server .
 
-finish
-*************************************
+       add_file :
+              The "add_file" command receives the file name and the
+                file path and then adds it to the database.
+              example: add_file <file_name> <file path>
+
+       remove_file :
+              The remove_file command gets
+                the name of the file and removes it .
+              example: remove_file <file_name>
+
+      list_files :
+              The list_files command show all files with information .
+
+       ban:
+              The ban command ban get a ip and block it .
+              example: ban <ip>
+
+       unban:
+              The unban command get a ip and unblock ip .
+              example: unban <ip>
+
+       exit :
+              The exit command terminate server .
+
+--------------------------------------------------------------------------
