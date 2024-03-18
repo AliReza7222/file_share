@@ -50,7 +50,7 @@ class DataBase:
         self.connect_db.commit()
         self.talk_to_database(close=True)
 
-    def select_data(self, table_name: str, column: tuple, condition: str=None):
+    def select_data(self, table_name: str, column: str, condition: str=None):
         cursor = self.talk_to_database(connect=True)
         if condition:
             rows = cursor.execute(
