@@ -3,7 +3,6 @@ import threading
 from colorama import Fore
 
 from server import Server
-from database import DataBase
 from utils.output_input import _print, _input
 
 
@@ -58,6 +57,7 @@ class RunServer(Server):
         else:
             print(action, input_user)
             _print("This command is invalid. Enter 'help' for a list of commands.", Fore.RED)
+
 
 obj = RunServer()
 obj.command_user()

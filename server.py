@@ -2,12 +2,11 @@ import os
 import threading
 import socket
 import json
-import time
 
 from colorama import Fore
 from database import DataBase
 from utils.exception import BlockIPException
-from utils.output_input import _print, _input
+from utils.output_input import (_print, _input)
 
 
 class Server:
@@ -37,8 +36,7 @@ class Server:
             _print("This ip isn't in black list !", Fore.RED)
 
     def block(self, ip: str) -> None:
-        if not self.filter_check_data(
-            table_name='black_list', column='ip', data=ip):
+        if not self.filter_check_data(table_name='black_list', column='ip', data=ip):
             self.database.insert_data(
                 table_name='black_list',
                 columns='ip',
@@ -51,8 +49,7 @@ class Server:
         return self.database.select_data(table_name='media', column="name, file")
 
     def add_file(self, name: str, path_file: str) -> None:
-        if not self.filter_check_data(
-            table_name='media', column='name', data=name):
+        if not self.filter_check_data(table_name='media', column='name', data=name):
             self.database.insert_data(
                 table_name='media',
                 columns='name, file',
@@ -62,10 +59,8 @@ class Server:
         else:
             _print(f"A file with this name: {name} exists !", Fore.RED)
 
-
     def remove_file(self, name_file: str):
-        if self.filter_check_data(
-            table_name='media', column='name', data=name_file):
+        if self.filter_check_data(table_name='media', column='name', data=name_file):
             self.database.delete_data(
                 table_name='media',
                 column='name',
@@ -90,7 +85,7 @@ class Server:
 
     def check_ip_status(self, ip: str) -> None:
         if self.filter_check_data(table_name='black_list', column='ip', data=ip):
-            raise exception.BlockIPException("Your IP is blocked!")
+            raise BlockIPException("Your IP is blocked!")
 
     def client_handler(self, client, address): # not check and clean
         self.check_ip_status(ip=address[0])

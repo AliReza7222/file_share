@@ -18,7 +18,7 @@ class DataBase:
     def check_exists_db(self):
         return os.path.exists(self.name_db)
 
-    def talk_to_database(self, connect: bool=False, close: bool=False):
+    def talk_to_database(self, connect: bool = False, close: bool = False):
         if connect:
             self.connect_db = sqlite3.connect(self.name_db)
             return self.connect_db.cursor()
@@ -26,7 +26,7 @@ class DataBase:
             if hasattr(self, 'connect_db'):
                 self.connect_db.close()
 
-    def create_table(self, table_name: str, columns: list):
+    def create_table(self, table_name: str, columns: str):
         cursor = self.talk_to_database(connect=True)
         columns = 'id INTEGER PRIMARY KEY AUTOINCREMENT, ' + columns
         cursor.execute(
@@ -50,7 +50,7 @@ class DataBase:
         self.connect_db.commit()
         self.talk_to_database(close=True)
 
-    def select_data(self, table_name: str, column: str, condition: str=None):
+    def select_data(self, table_name: str, column: str, condition: str = None):
         cursor = self.talk_to_database(connect=True)
         if condition:
             rows = cursor.execute(
