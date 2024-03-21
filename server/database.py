@@ -85,6 +85,6 @@ class DataBase:
             _print(f'Table {table_name} created ✔', Fore.GREEN)
 
 
-if __name__ == 'database':
+if __name__ == '__main__':
     db = DataBase()
     db.create_db()
