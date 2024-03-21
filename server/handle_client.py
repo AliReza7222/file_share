@@ -26,8 +26,11 @@ class HandleClient:
             )
 
     @staticmethod
-    def end_send_data(client_socket: socket.socket) -> None:
-        time.sleep(3)
+    def end_send_data(client_socket: socket.socket, download:str = None) -> None:
+        if download:
+            time.sleep(4)
+        else:
+            time.sleep(1)
         client_socket.send(b'END')  # end send data
 
     def process_message_client(
@@ -64,7 +67,5 @@ class HandleClient:
             with open(path_file, 'rb') as file:
                 byte_file = file.read()
                 client_socket.sendall(byte_file)
-                self.end_send_data(client_socket)
+                self.end_send_data(client_socket, download=True)
             _print(f"{ip}:{port} download file {name_file} .", Fore.GREEN)
-
-

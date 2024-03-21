@@ -3,8 +3,6 @@ import json
 import time
 import os
 
-# socket.MSG_DONTWAIT
-
 
 class Client:
 

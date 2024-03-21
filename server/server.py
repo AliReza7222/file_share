@@ -55,7 +55,7 @@ class Server:
             self.database.delete_data(
                 table_name='media',
                 column='name',
-                data=f"\'{name_file}\'"
+                data=name_file
             )
             _print(f"Successfully remove file with name {name_file} .", Fore.GREEN)
         else:
