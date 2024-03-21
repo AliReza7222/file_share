@@ -6,3 +6,11 @@ Help commands client
         exit :
                 This command will exit you .
 
+        list_files :
+                This command will show you the list of names that you can download .
+
+        download :
+                This command is for downloading the desired file.
+                    It takes an input that is the name of the desired file in the list of names
+                    example: download <name-file>
+
