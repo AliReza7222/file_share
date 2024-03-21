@@ -45,6 +45,7 @@ class RunClient(Client):
             _print("You are not connect to server please connect to server !", Fore.LIGHTRED_EX)
 
         elif action == 'list_files' and len(input_user) == 0:
+            _print("Please waite for download file ...", Fore.LIGHTCYAN_EX)
             name_files = self.get_list_files().split(',')
             for name in name_files:
                 _print(f"name :\t {name}", Fore.LIGHTBLUE_EX)
