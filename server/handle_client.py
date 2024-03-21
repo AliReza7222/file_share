@@ -42,3 +42,29 @@ class HandleClient:
             client_socket.sendall(name_files.encode())
             self.end_send_data(client_socket)
             _print(f"{ip}:{port} get list files .", Fore.GREEN)
+
+        elif message_client == 'check_name_file':
+            name_file = client_socket.recv(1000).decode()
+            if self.database.filter_check_data(
+                    table_name='media', column='name', data=name_file):
+                client_socket.send(b'ok')
+            else:
+                client_socket.send(b'reject')
+
+        elif message_client == 'download':
+            name_file = client_socket.recv(1000).decode()
+            get_file_from_db = self.database.select_data(
+                table_name='media',
+                column='file',
+                condition=f"name=\'{name_file}\'"
+            )
+            path_file = get_file_from_db[0][0]
+            format_file = path_file.split('/')[-1].split('.')[1]
+            client_socket.send(format_file.encode())
+            with open(path_file, 'rb') as file:
+                byte_file = file.read()
+                client_socket.sendall(byte_file)
+                self.end_send_data(client_socket)
+            _print(f"{ip}:{port} download file {name_file} .", Fore.GREEN)
+
+

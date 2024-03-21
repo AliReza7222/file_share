@@ -15,16 +15,8 @@ class Server:
         self.database = DataBase()
         self.client = HandleClient()
 
-    def filter_check_data(self, table_name: str, column: str, data: str) -> bool:
-        filter_data = self.database.select_data(
-            table_name=table_name,
-            column=column,
-            condition=f"{column}=\'{data}\'"
-        )
-        return True if filter_data else False
-
     def unblock(self, ip: str) -> None:
-        if self.filter_check_data(table_name='black_list', column='ip', data=ip):
+        if self.database.filter_check_data(table_name='black_list', column='ip', data=ip):
             self.database.delete_data(
                 table_name='black_list',
                 data=ip,
@@ -35,7 +27,7 @@ class Server:
             _print("This ip isn't in black list !", Fore.RED)
 
     def block(self, ip: str) -> None:
-        if not self.filter_check_data(table_name='black_list', column='ip', data=ip):
+        if not self.database.filter_check_data(table_name='black_list', column='ip', data=ip):
             self.database.insert_data(
                 table_name='black_list',
                 columns='ip',
@@ -48,7 +40,7 @@ class Server:
         return self.database.select_data(table_name='media', column="name, file")
 
     def add_file(self, name: str, path_file: str) -> None:
-        if not self.filter_check_data(table_name='media', column='name', data=name):
+        if not self.database.filter_check_data(table_name='media', column='name', data=name):
             self.database.insert_data(
                 table_name='media',
                 columns='name, file',
@@ -59,7 +51,7 @@ class Server:
             _print(f"A file with this name: {name} exists !", Fore.RED)
 
     def remove_file(self, name_file: str):
-        if self.filter_check_data(table_name='media', column='name', data=name_file):
+        if self.database.filter_check_data(table_name='media', column='name', data=name_file):
             self.database.delete_data(
                 table_name='media',
                 column='name',
@@ -70,7 +62,7 @@ class Server:
             _print(f"There is no file with this name!", Fore.RED)
 
     def check_ip_blocked(self, ip: str, port: int, client_socket: socket.socket) -> bool:
-        if self.filter_check_data(table_name='black_list', column='ip', data=ip):
+        if self.database.filter_check_data(table_name='black_list', column='ip', data=ip):
             _print("This Ip is blocked for connection !", Fore.RED)
             client_socket.sendall('reject'.encode())
             return True

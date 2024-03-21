@@ -27,16 +27,45 @@ class Client:
             self.client_socket.send(b"exit")
             self.client_socket.close()
 
-    def get_list_files(self):
-        list_files = ""
+    def get_data(self) -> bytes:
+        data = b''
         permission_get = True
-        self.client_socket.send(b'list_files')
         while permission_get:
-            get_list_files = self.client_socket.recv(10).decode()
-            if get_list_files == 'END':
+            get_list_files = self.client_socket.recv(4 * 10**6)
+            if get_list_files == b'END':
                 break
-            list_files += get_list_files
-        return list_files
+            data += get_list_files
+        return data
+
+    def get_list_files(self) -> str:
+        self.client_socket.send(b'list_files')
+        return self.get_data().decode()
+
+    def check_file_exists(self, name_file: str) -> bool:
+        """" check file exists with name : name_file for download """
+        self.client_socket.send(b'check_name_file')
+        self.client_socket.send(name_file.encode())
+        message_server = self.client_socket.recv(10).decode()
+        if message_server == 'ok':
+            return True
+        elif message_server == 'reject':
+            return False
+
+    @staticmethod
+    def check_exists_dir_download():
+        if not os.path.exists('Download'):
+            os.mkdir('Download')
+
+    def download_file(self, name_file: str) -> None:
+        self.client_socket.send(b'download')
+        self.client_socket.send(name_file.encode())
+        format_file = self.client_socket.recv(100).decode()
+        byte_file = self.get_data()
+        self.check_exists_dir_download()
+        with open(f"Download/{name_file}.{format_file}", 'wb') as file:
+            file.write(byte_file)
 
 
-# get-file: | list-files:  | connect : OK | terminate : OK | help : OK| create a directory Download for files if not exists
+
+
+# get-file: | list-files: OK | connect : OK | terminate : OK | help : OK| create a directory Download for files if not exists

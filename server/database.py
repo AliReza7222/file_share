@@ -63,6 +63,14 @@ class DataBase:
         self.talk_to_database(close=True)
         return rows
 
+    def filter_check_data(self, table_name: str, column: str, data: str) -> bool:
+        filter_data = self.select_data(
+            table_name=table_name,
+            column=column,
+            condition=f"{column}=\'{data}\'"
+        )
+        return True if filter_data else False
+
     @staticmethod
     def tables():
         tables = {

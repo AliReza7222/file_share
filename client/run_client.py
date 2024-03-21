@@ -49,6 +49,14 @@ class RunClient(Client):
             for name in name_files:
                 _print(f"name :\t {name}", Fore.LIGHTBLUE_EX)
 
+        elif action == 'download' and len(input_user) == 1:
+            if self.check_file_exists(name_file=input_user[0]):
+                _print("Please waite for download file ...", Fore.LIGHTCYAN_EX)
+                self.download_file(name_file=input_user[0])
+                _print(f"Download file {input_user[0]} successfully completed ✔", Fore.LIGHTGREEN_EX)
+            else:
+                _print("There is no file with this name !", Fore.LIGHTRED_EX)
+
         else:
             _print("This command is invalid. Enter 'help' for a list of commands.", Fore.LIGHTRED_EX)
 
