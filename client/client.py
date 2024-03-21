@@ -64,8 +64,3 @@ class Client:
         self.check_exists_dir_download()
         with open(f"Download/{name_file}.{format_file}", 'wb') as file:
             file.write(byte_file)
-
-
-
-
-# get-file: | list-files: OK | connect : OK | terminate : OK | help : OK| create a directory Download for files if not exists

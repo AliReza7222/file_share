@@ -27,7 +27,7 @@ class HandleClient:
 
     @staticmethod
     def end_send_data(client_socket: socket.socket) -> None:
-        time.sleep(0.001)
+        time.sleep(3)
         client_socket.send(b'END')  # end send data
 
     def process_message_client(
