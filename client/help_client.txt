@@ -1,0 +1,8 @@
+Help commands client
+
+        connect :
+                This command will connect you to the server if you are not already connected .
+
+        exit :
+                This command will exit you .
+
