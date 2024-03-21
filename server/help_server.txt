@@ -1,5 +1,5 @@
 
-help commands :
+Help commands server:
 
        start :
               The start command active server .
@@ -17,13 +17,13 @@ help commands :
       list_files :
               The list_files command show all files with information .
 
-       ban:
-              The ban command ban get a ip and block it .
+      ban:
+              The ban command ban get an ip and block it .
               example: ban <ip>
 
-       unban:
-              The unban command get a ip and unblock ip .
+      unban:
+              The unban command get an ip and unblock ip .
               example: unban <ip>
 
-       exit :
+      exit :
               The exit command terminate server .

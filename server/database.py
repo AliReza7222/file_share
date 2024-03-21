@@ -45,7 +45,7 @@ class DataBase:
     def delete_data(self, table_name: str, data: str, column: str):
         cursor = self.talk_to_database(connect=True)
         cursor.execute(
-            f"DELETE FROM {table_name} WHERE {column}={data}"
+            f"DELETE FROM {table_name} WHERE {column}=\'{data}\'"
         )
         self.connect_db.commit()
         self.talk_to_database(close=True)

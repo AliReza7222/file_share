@@ -1,16 +1,8 @@
-***************************
+Help commands client
 
-help commands Client
+        connect :
+                This command will connect you to the server if you are not already connected .
 
-        connect --------> if server be active ,client connect to server
-        terminate -------> is for exist of program
-        update ------------> if client be connect , update is update my list for download
-        history ------------> show all used commend
-        get -----------------> if client be connect , get with one address ,downloads select file
-        for example:
-              get address_file
-        list ------------------> show all name my_list
+        exit :
+                This command will exit you .
 
-finish
-
-*********************************

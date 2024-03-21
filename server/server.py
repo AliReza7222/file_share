@@ -1,12 +1,10 @@
-import os
 import threading
 import socket
-import json
 
 from colorama import Fore
-from database import DataBase
-from utils.exception import BlockIPException
-from utils.output_input import (_print, _input)
+from .database import DataBase
+from .handle_client import HandleClient
+from utils.output_input import _print
 
 
 class Server:
@@ -15,6 +13,7 @@ class Server:
         self.ip = '127.0.0.1'
         self.port = 7222
         self.database = DataBase()
+        self.client = HandleClient()
 
     def filter_check_data(self, table_name: str, column: str, data: str) -> bool:
         filter_data = self.database.select_data(
@@ -70,46 +69,30 @@ class Server:
         else:
             _print(f"There is no file with this name!", Fore.RED)
 
-    def start(self) -> None:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket_server:
-            socket_server.bind((self.ip, self.port))
-            socket_server.listen(10)
-            _print('-'*20 + "server activated" + '-'*20, Fore.CYAN)
-            for i in range(1, 10):
-                socket_client, address = socket_server.accept()
-                th = threading.Thread(target=self.client_handler,
-                    args=(socket_client, address), name=f"client{i}")
-                th.start()
-                _print(f"{address[0]}:{address[1]} connectd !", Fore.GREEN)
-            _print("close server !", Fore.RED)
-
-    def check_ip_status(self, ip: str) -> None:
+    def check_ip_blocked(self, ip: str, port: int, client_socket: socket.socket) -> bool:
         if self.filter_check_data(table_name='black_list', column='ip', data=ip):
-            raise BlockIPException("Your IP is blocked!")
+            _print("This Ip is blocked for connection !", Fore.RED)
+            client_socket.sendall('reject'.encode())
+            return True
+        _print(f"{ip}:{port} connected !", Fore.GREEN)
+        client_socket.sendall(f'connected'.encode())
+        return False
 
-    def client_handler(self, client, address): # not check and clean
-        self.check_ip_status(ip=address[0])
-        while True:
-            message_continue = (client.recv(1000)).decode()
-            list_file = list()
-            list_addr = list()
-            with open("file_list.txt", "r") as all_file:
-                files = all_file.read().split()
-                list_addr.extend(files)
-                for line in files:
-                    name_file = line.split("\\")[-1]
-                    list_file.append(name_file)
-            if message_continue == "update":
-                message_list = json.dumps(list_file)
-                client.sendall(message_list.encode())
-            elif message_continue == "get":
-                message_client_one = client.recv(1024).decode()
-                if message_client_one in list_addr:
-                    name_file_download = message_client_one.split("\\")[-1]
-                    with open(message_client_one, "rb") as select_file:
-                        file = select_file.read()
-                        client.sendall(file)
-                    print(f"file {name_file_download} downloaded ." )
-            elif message_continue == "terminate":
-                print(f"exit {name}.")
-                break
+    def start(self) -> None:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as socket_server:
+                socket_server.bind((self.ip, self.port))
+                socket_server.listen(10)
+                _print('-'*20 + "server activated" + '-'*20, Fore.CYAN)
+                for i in range(1, 10):
+                    client_socket, address = socket_server.accept()  # Waiting for a connection
+                    if self.check_ip_blocked(ip=address[0], port=address[1], client_socket=client_socket):
+                        continue
+                    th = threading.Thread(
+                        target=self.client.speak_with_client,
+                        args=(client_socket, ),
+                        name=f"client{i}")
+                    th.start()
+                _print("close server !", Fore.RED)
+        except socket.error as error_message:
+            _print(str(error_message), Fore.RED)
