@@ -1,5 +1,6 @@
 # FileShare
 A low-level code that uses sockets to communicate between the client and the server. This code uses the python socket library, which maintains the connection between the client and the server.
+![diagram-project](https://raw.githubusercontent.com/AliReza7222/file_share/master/diagram_image/Screen%20Shot%201402-12-26%20at%2012.08.05.png)
 
 ## about project 
 This code is implemented in such a way that the administrator who owns the server package can upload his files with a specific name for each file in the database and up to ten clients can connect to the server.
@@ -36,6 +37,3 @@ python -m server.run_server
 ```
 python -m client.run_client
 ```
-
-## diagram-project
-![diagram-project](https://raw.githubusercontent.com/AliReza7222/file_share/master/diagram_image/Screen%20Shot%201402-12-26%20at%2012.08.05.png)
